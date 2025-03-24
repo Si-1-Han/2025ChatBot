@@ -10,10 +10,12 @@ soup = bs(res.text, "lxml")
 
 # soup 데이터에서 필요한 요소 검색하기
 title = soup.select("a.tltle")
-price = soup.select("td.number:n")
+price = soup.select("td.number:nth-child(3)")
+volume = soup.select("td.number:nth-child(6)")
 
 # 리스트의 데이터 길이를 확인해서 검증(len())
-print(len(price))
 
-#
-#contentarea > div.box_type_l > table > tbody > tr:nth-child(3) > td:nth-child(3)
+min_len = min(len(title), len(price), len(volume))
+
+for i in range(min_len):
+    print(f"{title[i].get_text(strip=True)}: {price[i].get_text(strip=True)}원, 거래량 {volume[i].get_text(strip=True)}주")
