@@ -3,6 +3,7 @@ from flask_cors import CORS
 import config
 import chat_engine as chatbot
 import database as db
+import json  # JSON 문자열 파싱을 위해 추가
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 CORS(app)
@@ -25,10 +26,16 @@ def chat():
     user_id = data.get('user_id', 'anonymous')
 
     history = db.get_conversation_history(user_id, limit=5)
-    response = chatbot.get_response(user_message, history)
 
-    db.save_conversation(user_id, user_message, response)
-    return jsonify({'response': response})
+    # get_response()는 JSON 문자열을 반환하므로 파싱 필요
+    response_json = chatbot.get_response(user_message, history)
+    response_data = json.loads(response_json)
+
+    # 응답이 성공일 때만 대화 저장
+    if response_data.get("status") == "success":
+        db.save_conversation(user_id, user_message, response_data.get("summary", ""))
+
+    return jsonify(response_data)  # 전체 JSON 그대로 반환
 
 @app.route('/api/reset', methods=['POST'])
 def reset_conversation():

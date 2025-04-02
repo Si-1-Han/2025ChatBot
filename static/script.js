@@ -1,15 +1,15 @@
 let API_URL = '';
 
-// 설정을 불러오되, 실패 시 fallback 주소 지정
+// 초기 설정 불러오기
 async function loadConfig() {
     try {
         const response = await fetch('/config');
         const data = await response.json();
-        API_URL = data.API_URL || 'http://127.0.0.1:5000/api'; // fallback
+        API_URL = data.API_URL || 'http://127.0.0.1:5000/api';
         document.documentElement.style.setProperty('--theme-color', data.THEME_COLOR);
     } catch (error) {
-        console.error('Error fetching config:', error);
-        API_URL = 'http://127.0.0.1:5000/api'; // fallback 기본값
+        console.error('Error loading config:', error);
+        API_URL = 'http://127.0.0.1:5000/api';
     }
 }
 
@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function sendMessage() {
         const message = userInput.value.trim();
         if (!message) return;
+
         addMessageToUI('user', message);
         userInput.value = '';
 
@@ -38,22 +39,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: message, user_id: userId })
             });
+
             const data = await response.json();
             chatMessages.removeChild(typingIndicator);
-            addMessageToUI('bot', data.response);
+
+            let botMessage = '';
+
+            if (data.status === 'success') {
+                botMessage += `📌 <strong>요약</strong>:<br>${data.summary}<br><br>`;
+                if (data.results && data.results.length > 0) {
+                    botMessage += `<strong>📰 관련 뉴스:</strong><ul>`;
+                    data.results.forEach(item => {
+                        botMessage += `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`;
+                    });
+                    botMessage += `</ul>`;
+                }
+            } else if (data.status === 'no_results') {
+                botMessage = `😕 ${data.message}`;
+            } else {
+                botMessage = data.message || '죄송합니다. 처리 중 오류가 발생했습니다.';
+            }
+
+            addMessageToUI('bot', botMessage);
         } catch (error) {
             console.error('Error:', error);
             chatMessages.removeChild(typingIndicator);
-            addMessageToUI('bot', '죄송합니다. 오류가 발생했습니다. 다시 시도해주세요.');
+            addMessageToUI('bot', '❌ 서버 응답 중 오류가 발생했습니다.');
         }
     }
 
     function addMessageToUI(type, content) {
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message', type === 'user' ? 'user-message' : 'bot-message');
+
         const messageContent = document.createElement('div');
         messageContent.classList.add('message-content');
-        messageContent.innerText = content;
+        messageContent.innerHTML = content;  // HTML 포함 (링크 등)
+
         messageDiv.appendChild(messageContent);
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -62,15 +84,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function addTypingIndicator() {
         const typingDiv = document.createElement('div');
         typingDiv.classList.add('message', 'bot-message');
+
         const typingIndicator = document.createElement('div');
         typingIndicator.classList.add('typing-indicator');
+
         for (let i = 0; i < 3; i++) {
             const dot = document.createElement('span');
             typingIndicator.appendChild(dot);
         }
+
         typingDiv.appendChild(typingIndicator);
         chatMessages.appendChild(typingDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+
         return typingDiv;
     }
 
@@ -83,21 +109,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: userId })
             });
+
             chatMessages.innerHTML = '';
-            addMessageToUI('bot', '안녕하세요! 고객 지원 챗봇입니다. 어떤 도움이 필요하신가요?');
+            addMessageToUI('bot', '안녕하세요! 챗봇입니다. 어떤 정보가 필요하신가요?');
         } catch (error) {
             console.error('Error resetting conversation:', error);
         }
     }
 
+    // 이벤트 리스너 등록
     sendBtn.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') sendMessage();
     });
     resetBtn.addEventListener('click', resetConversation);
-    userInput.addEventListener('focus', () => {
-        setTimeout(() => {
-            window.scrollTo(0, document.body.scrollHeight);
-        }, 500);
-    });
 });
