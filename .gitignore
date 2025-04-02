@@ -1,2 +1,3 @@
 /Backend/kobert_intent_prediction/results/
 /.venv
+/Backend/kobert/intent/prediction/kobert_intent_model
