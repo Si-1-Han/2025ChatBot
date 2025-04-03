@@ -1,0 +1,19 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
+    height: 60px;
+    box-sizing: border-box;
+  }
+  
+  .header-center {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 40px;
+    font-family: 'Times New Roman', serif;
+    color: #2456e5;
+  }
+  
