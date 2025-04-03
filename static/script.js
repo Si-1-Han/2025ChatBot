@@ -1,126 +1,161 @@
 let API_URL = '';
 
-// 초기 설정 불러오기
 async function loadConfig() {
-    try {
-        const response = await fetch('/config');
-        const data = await response.json();
-        API_URL = data.API_URL || 'http://127.0.0.1:5000/api';
-        document.documentElement.style.setProperty('--theme-color', data.THEME_COLOR);
-    } catch (error) {
-        console.error('Error loading config:', error);
-        API_URL = 'http://127.0.0.1:5000/api';
-    }
+  const res = await fetch('/config');
+  const data = await res.json();
+  API_URL = data.API_URL;
+  document.documentElement.style.setProperty('--theme-color', data.THEME_COLOR);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadConfig();
+  loadConfig();
 
-    const userId = 'user_' + Math.random().toString(36).substring(2, 9);
-    const chatMessages = document.getElementById('chat-messages');
-    const userInput = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
-    const resetBtn = document.getElementById('reset-btn');
+  const chatBox = document.getElementById('chat-box');
+  const sendBtn = document.getElementById('send-btn');
+  const input = document.getElementById('user-input');
+  const chatList = document.getElementById('chat-list');
+  const newChatBtn = document.getElementById('new-chat');
+  const modal = document.getElementById('delete-modal');
+  const modalTitle = document.getElementById('delete-title');
+  const closeModal = document.querySelector('.close-btn');
+  const cancelDelete = document.getElementById('cancel-delete');
+  const confirmDelete = document.getElementById('confirm-delete');
+  const toggleDark = document.getElementById('toggle-dark');
 
-    async function sendMessage() {
-        const message = userInput.value.trim();
-        if (!message) return;
+  let currentUser = localStorage.getItem('user_id') || 'user_' + Math.random().toString(36).substring(2, 9);
+  localStorage.setItem('user_id', currentUser);
 
-        addMessageToUI('user', message);
-        userInput.value = '';
+  let selectedChatId = localStorage.getItem('selected_chat_id');
 
-        const typingIndicator = addTypingIndicator();
+  function addMessage(type, content) {
+    const msg = document.createElement('div');
+    msg.className = `message ${type}`;
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.innerHTML = content;
+    msg.appendChild(bubble);
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
 
-        try {
-            if (!API_URL) throw new Error('API_URL이 설정되지 않았습니다.');
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
 
-            const response = await fetch(`${API_URL}/chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message, user_id: userId })
-            });
+    addMessage('user', text);
+    input.value = '';
 
-            const data = await response.json();
-            chatMessages.removeChild(typingIndicator);
+    try {
+      const res = await fetch(`${API_URL}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: currentUser, message: text, chat_id: selectedChatId })
+      });
 
-            let botMessage = '';
+      const data = await res.json();
+      selectedChatId = data.chat_id;
+      localStorage.setItem('selected_chat_id', selectedChatId);
 
-            if (data.status === 'success') {
-                botMessage += `📌 <strong>요약</strong>:<br>${data.summary}<br><br>`;
-                if (data.results && data.results.length > 0) {
-                    botMessage += `<strong>📰 관련 뉴스:</strong><ul>`;
-                    data.results.forEach(item => {
-                        botMessage += `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`;
-                    });
-                    botMessage += `</ul>`;
-                }
-            } else if (data.status === 'no_results') {
-                botMessage = `😕 ${data.message}`;
-            } else {
-                botMessage = data.message || '죄송합니다. 처리 중 오류가 발생했습니다.';
-            }
+      let botMsg = `<b>📌 요약:</b><br>${data.summary}<br><br>`;
+      if (data.results?.length) {
+        botMsg += `<b>📰 관련 뉴스</b><ul>`;
+        data.results.forEach(item => {
+          botMsg += `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`;
+        });
+        botMsg += `</ul>`;
+      }
 
-            addMessageToUI('bot', botMessage);
-        } catch (error) {
-            console.error('Error:', error);
-            chatMessages.removeChild(typingIndicator);
-            addMessageToUI('bot', '❌ 서버 응답 중 오류가 발생했습니다.');
+      addMessage('bot', botMsg);
+      loadChats();
+    } catch (err) {
+      console.error('❌ chat error:', err);
+      addMessage('bot', '❌ 서버 오류가 발생했습니다.');
+    }
+  }
+
+  async function loadChats() {
+    try {
+      const res = await fetch(`${API_URL}/chats?user_id=${currentUser}`);
+      const data = await res.json();
+      chatList.innerHTML = '';
+
+      if (data.status === 'success') {
+        data.chats.forEach(chat => {
+          const li = document.createElement('li');
+          li.innerHTML = `<span>${chat.title}</span><button class="delete-btn" data-id="${chat.id}"><i class="fas fa-trash"></i></button>`;
+          li.addEventListener('click', () => {
+            selectedChatId = chat.id;
+            localStorage.setItem('selected_chat_id', selectedChatId);
+            loadChatHistory(chat.id);
+          });
+          chatList.appendChild(li);
+        });
+
+        if (!selectedChatId && data.chats.length > 0) {
+          selectedChatId = data.chats[0].id;
+          localStorage.setItem('selected_chat_id', selectedChatId);
+          loadChatHistory(selectedChatId);
         }
+      }
+    } catch (err) {
+      console.error('❌ loadChats error:', err);
     }
+  }
 
-    function addMessageToUI(type, content) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', type === 'user' ? 'user-message' : 'bot-message');
-
-        const messageContent = document.createElement('div');
-        messageContent.classList.add('message-content');
-        messageContent.innerHTML = content;  // HTML 포함 (링크 등)
-
-        messageDiv.appendChild(messageContent);
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+  async function loadChatHistory(chatId) {
+    try {
+      const res = await fetch(`${API_URL}/history/${chatId}`);
+      const data = await res.json();
+      chatBox.innerHTML = '';
+      data.history.forEach(entry => {
+        addMessage('user', entry.message);
+        addMessage('bot', entry.response);
+      });
+    } catch (err) {
+      console.error('❌ loadChatHistory error:', err);
     }
+  }
 
-    function addTypingIndicator() {
-        const typingDiv = document.createElement('div');
-        typingDiv.classList.add('message', 'bot-message');
+  newChatBtn.addEventListener('click', () => {
+    chatBox.innerHTML = '';
+    selectedChatId = null;
+    localStorage.removeItem('selected_chat_id');
+    addMessage('bot', '안녕하세요! 챗봇입니다. 무엇을 도와드릴까요?');
+  });
 
-        const typingIndicator = document.createElement('div');
-        typingIndicator.classList.add('typing-indicator');
-
-        for (let i = 0; i < 3; i++) {
-            const dot = document.createElement('span');
-            typingIndicator.appendChild(dot);
-        }
-
-        typingDiv.appendChild(typingIndicator);
-        chatMessages.appendChild(typingDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-
-        return typingDiv;
+  chatList.addEventListener('click', e => {
+    if (e.target.closest('.delete-btn')) {
+      e.stopPropagation();
+      const id = e.target.closest('.delete-btn').dataset.id;
+      modal.dataset.chatId = id;
+      modal.style.display = 'flex';
     }
+  });
 
-    async function resetConversation() {
-        try {
-            if (!API_URL) throw new Error('API_URL이 설정되지 않았습니다.');
-
-            await fetch(`${API_URL}/reset`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id: userId })
-            });
-
-            chatMessages.innerHTML = '';
-            addMessageToUI('bot', '안녕하세요! 챗봇입니다. 어떤 정보가 필요하신가요?');
-        } catch (error) {
-            console.error('Error resetting conversation:', error);
-        }
+  confirmDelete.addEventListener('click', async () => {
+    const id = modal.dataset.chatId;
+    await fetch(`${API_URL}/delete/${id}`, { method: 'DELETE' });
+    modal.style.display = 'none';
+    if (id === selectedChatId) {
+      selectedChatId = null;
+      localStorage.removeItem('selected_chat_id');
+      chatBox.innerHTML = '';
+      addMessage('bot', '대화가 삭제되었어요. 새로운 대화를 시작해보세요.');
     }
+    loadChats();
+  });
 
-    // 이벤트 리스너 등록
-    sendBtn.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
-    resetBtn.addEventListener('click', resetConversation);
+  cancelDelete.addEventListener('click', () => modal.style.display = 'none');
+  closeModal.addEventListener('click', () => modal.style.display = 'none');
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  toggleDark.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+  });
+
+  loadChats();
 });

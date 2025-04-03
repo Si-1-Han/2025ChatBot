@@ -1,9 +1,8 @@
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 import config
-import chat_engine as chatbot
+import chat_engine
 import database as db
-import json  # JSON 문자열 파싱을 위해 추가
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 CORS(app)
@@ -12,7 +11,7 @@ CORS(app)
 def index():
     return render_template("index.html")
 
-@app.route('/config', methods=['GET'])
+@app.route('/config')
 def get_config():
     return jsonify({
         "API_URL": f"http://{config.HOST}:{config.PORT}/api",
@@ -22,27 +21,37 @@ def get_config():
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json()
-    user_message = data.get('message', '')
-    user_id = data.get('user_id', 'anonymous')
+    user_id = data['user_id']
+    message = data['message']
+    chat_id = data.get('chat_id')
 
-    history = db.get_conversation_history(user_id, limit=5)
+    if not chat_id:
+        chat_id = db.create_chat(user_id)
 
-    # get_response()는 JSON 문자열을 반환하므로 파싱 필요
-    response_json = chatbot.get_response(user_message, history)
-    response_data = json.loads(response_json)
+    response_data = chat_engine.get_response(message)
 
-    # 응답이 성공일 때만 대화 저장
     if response_data.get("status") == "success":
-        db.save_conversation(user_id, user_message, response_data.get("summary", ""))
+        db.save_message(chat_id, message, response_data["summary"])
+    else:
+        response_data["summary"] = "요약할 수 없습니다."
 
-    return jsonify(response_data)  # 전체 JSON 그대로 반환
+    return jsonify({**response_data, "chat_id": chat_id})
 
-@app.route('/api/reset', methods=['POST'])
-def reset_conversation():
-    data = request.get_json()
-    user_id = data.get('user_id', 'anonymous')
-    db.clear_conversation_history(user_id)
-    return jsonify({'status': 'success', 'message': '대화가 초기화되었습니다.'})
+@app.route('/api/chats')
+def chats():
+    user_id = request.args.get("user_id")
+    chat_list = db.get_chat_list(user_id)
+    return jsonify({"status": "success", "chats": chat_list})
+
+@app.route('/api/history/<int:chat_id>')
+def history(chat_id):
+    messages = db.get_chat_history_by_chat_id(chat_id)
+    return jsonify({"status": "success", "history": messages})
+
+@app.route('/api/delete/<int:chat_id>', methods=['DELETE'])
+def delete(chat_id):
+    db.delete_chat(chat_id)
+    return jsonify({"status": "success", "message": "삭제되었습니다."})
 
 if __name__ == '__main__':
     app.run(debug=config.DEBUG, host=config.HOST, port=config.PORT)

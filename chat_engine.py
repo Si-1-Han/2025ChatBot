@@ -1,11 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-import json
-from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-def crawl_naver_news(query):
+def get_response(user_message):
+    return crawl_naver_news_improved(user_message)
+
+
+def crawl_naver_news_improved(query):
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -15,30 +19,19 @@ def crawl_naver_news(query):
     }
 
     url = f"https://search.naver.com/search.naver?where=news&query={query}"
-    response = requests.get(url, headers=headers)
-    if response.status_code != 200:
-        return {
-            "status": "error",
-            "message": "네이버 뉴스 검색에 실패했습니다.",
-            "results": []
-        }
+    res = requests.get(url, headers=headers)
+    soup = BeautifulSoup(res.text, "html.parser")
+    news_items = soup.select(".news_area")
 
-    soup = BeautifulSoup(response.text, "html.parser")
-    items = soup.select(".news_area")
-
-    if not items:
-        return {
-            "status": "no_results",
-            "message": f"'{query}'에 대한 뉴스 결과를 찾지 못했어요.",
-            "results": []
-        }
+    if not news_items:
+        return {"status": "no_results", "message": f"'{query}'에 대한 결과를 찾지 못했어요."}
 
     results = []
     full_texts = []
 
-    for item in items[:3]:
+    for item in news_items[:5]:
         title_tag = item.select_one("a.news_tit")
-        desc_tag = item.select_one("div.dsc_wrap")
+        desc_tag = item.select_one(".dsc_wrap")
 
         if not title_tag:
             continue
@@ -47,20 +40,42 @@ def crawl_naver_news(query):
         link = title_tag['href']
         snippet = desc_tag.get_text(strip=True) if desc_tag else ""
 
-        # 본문 크롤링 (요약용)
         content = ""
-        try:
-            article_res = requests.get(link, headers=headers, timeout=5)
-            article_soup = BeautifulSoup(article_res.text, 'html.parser')
-            paragraphs = article_soup.find_all("p")
-            content = ' '.join(
-                p.get_text(strip=True) for p in paragraphs if len(p.get_text(strip=True)) > 30
-            )
-        except Exception as e:
-            print(f"❌ 본문 크롤링 실패: {e}")
+        if "news.naver.com" in link:
+            try:
+                article_res = requests.get(link, headers=headers, timeout=5)
+                article_soup = BeautifulSoup(article_res.text, 'html.parser')
 
+                # ✅ 여러 백업 선택자 시도
+                candidate_selectors = [
+                    "div#newsct_article p",        # 최신
+                    "div#articleBodyContents p",   # 구버전
+                    "div#articeBody p",            # 일부 케이스
+                    "div.article_body p",          # 언론사별 특화
+                ]
+
+                for selector in candidate_selectors:
+                    paragraphs = article_soup.select(selector)
+                    if paragraphs:
+                        content = " ".join([
+                            p.get_text(strip=True)
+                            for p in paragraphs if len(p.get_text(strip=True)) > 30
+                        ])
+                        if content:
+                            break  # 본문 확보되면 종료
+
+                # 광고 필터링
+                if any(stop_word in content for stop_word in ["무단전재", "재배포", "기사원문"]):
+                    content = ""
+
+            except Exception as e:
+                print("❌ 본문 크롤링 실패:", e)
+
+        # 콘텐츠 없을 경우 스니펫 사용
         if content:
             full_texts.append(content)
+        elif snippet:
+            full_texts.append(snippet)
 
         results.append({
             "title": title,
@@ -68,8 +83,7 @@ def crawl_naver_news(query):
             "snippet": snippet
         })
 
-    cleaned = clean_texts(full_texts)
-    summary = summarize(cleaned, query)
+    summary = summarize_texts(full_texts)
 
     return {
         "status": "success",
@@ -78,41 +92,28 @@ def crawl_naver_news(query):
         "results": results
     }
 
-def clean_texts(text_list):
-    seen = set()
-    cleaned = []
-    for text in text_list:
-        text = re.sub(r'\s+', ' ', text.strip())
-        if len(text) < 30 or text in seen or "네이버" in text:
-            continue
-        seen.add(text)
-        cleaned.append(text)
-    return cleaned
 
-def summarize(texts, query, max_sentences=3):
-    sentences = re.split(r'[.!?]', ' '.join(texts))
-    sentences = [s.strip() for s in sentences if len(s.strip()) > 30]
+def summarize_texts(texts, max_sentences=3, similarity_threshold=0.8):
+    sentences = []
+    for text in texts:
+        parts = re.split(r"[.!?]", text)
+        parts = [s.strip() for s in parts if len(s.strip()) > 30]
+        sentences.extend(parts)
 
     if not sentences:
         return "요약할 수 있는 정보가 부족합니다."
 
     vectorizer = TfidfVectorizer()
-    vectors = vectorizer.fit_transform([query] + sentences)
-    query_vec = vectors[0]
-    sentence_vecs = vectors[1:]
+    X = vectorizer.fit_transform(sentences)
+    scores = X.sum(axis=1).A1
+    ranked_indices = np.argsort(scores)[::-1]
 
-    scores = (sentence_vecs @ query_vec.T).toarray().flatten()
+    selected = []
+    for idx in ranked_indices:
+        if len(selected) >= max_sentences:
+            break
+        if all(cosine_similarity(X[idx], X[i])[0][0] < similarity_threshold for i in selected):
+            selected.append(idx)
 
-    top_indices = np.argsort(scores)[::-1][:max_sentences]
-    top_sentences = [sentences[i] for i in top_indices]
-
-    return ' '.join(top_sentences) + '.'
-
-def get_response(user_message, conversation_history=[]):
-    if not user_message.strip():
-        return json.dumps({
-            "status": "prompt",
-            "message": "안녕하세요! 어떤 정보를 찾아드릴까요? 😊"
-        }, ensure_ascii=False)
-
-    return json.dumps(crawl_naver_news(user_message), ensure_ascii=False, indent=2)
+    summary = " ".join([sentences[i] for i in selected])
+    return summary + "."
