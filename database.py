@@ -1,98 +1,48 @@
 import sqlite3
+from datetime import datetime
 import os
+import config
 
-DB_PATH = "chatbot.db"
+DB_PATH = config.DB_PATH
 
-def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-# 수동 호출용 초기화 함수 (원할 때만 실행)
 def init_db():
-    db = get_db()
-    cur = db.cursor()
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS chat_sessions (
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS conversations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id TEXT NOT NULL
-        )
-    """)
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS messages (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            chat_id INTEGER,
+            user_id TEXT,
             message TEXT,
             response TEXT,
-            FOREIGN KEY (chat_id) REFERENCES chat_sessions(id) ON DELETE CASCADE
+            timestamp TEXT
         )
-    """)
+    ''')
+    conn.commit()
+    conn.close()
 
-    db.commit()
-    db.close()
+def save_conversation(user_id, message, response):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('INSERT INTO conversations (user_id, message, response, timestamp) VALUES (?, ?, ?, ?)',
+              (user_id, message, response, datetime.now().isoformat()))
+    conn.commit()
+    conn.close()
 
-# CREATE
-def create_chat(user_id):
-    db = get_db()
-    cur = db.cursor()
-    cur.execute("INSERT INTO chat_sessions (user_id) VALUES (?)", (user_id,))
-    db.commit()
-    chat_id = cur.lastrowid
-    db.close()
-    return chat_id
+def get_conversation_history(user_id, limit=5):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('SELECT message, response FROM conversations WHERE user_id = ? ORDER BY id DESC LIMIT ?', (user_id, limit))
+    rows = c.fetchall()
+    conn.close()
+    return rows[::-1]  # 최신 → 과거 순 정렬 후 뒤집기
 
-def save_message(chat_id, message, response):
-    db = get_db()
-    cur = db.cursor()
-    cur.execute(
-        "INSERT INTO messages (chat_id, message, response) VALUES (?, ?, ?)",
-        (chat_id, message, response)
-    )
-    db.commit()
-    db.close()
+def clear_conversation_history(user_id):
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute('DELETE FROM conversations WHERE user_id = ?', (user_id,))
+    conn.commit()
+    conn.close()
 
-# READ
-def get_chat_list(user_id):
-    db = get_db()
-    cur = db.cursor()
-    cur.execute("""
-        SELECT cs.id, m.message
-        FROM chat_sessions cs
-        LEFT JOIN messages m ON cs.id = m.chat_id
-        WHERE cs.user_id = ?
-        GROUP BY cs.id
-        ORDER BY cs.id DESC
-    """, (user_id,))
-    chats = [{"id": row["id"], "title": row["message"][:20] if row["message"] else "(빈 대화)"} for row in cur.fetchall()]
-    db.close()
-    return chats
-
-def get_chat_history_by_chat_id(chat_id):
-    db = get_db()
-    cur = db.cursor()
-    cur.execute("SELECT message, response FROM messages WHERE chat_id = ? ORDER BY id ASC", (chat_id,))
-    messages = [{"message": row["message"], "response": row["response"]} for row in cur.fetchall()]
-    db.close()
-    return messages
-
-# UPDATE (optional)
-def update_message(message_id, new_message, new_response):
-    db = get_db()
-    cur = db.cursor()
-    cur.execute(
-        "UPDATE messages SET message = ?, response = ? WHERE id = ?",
-        (new_message, new_response, message_id)
-    )
-    db.commit()
-    db.close()
-
-# DELETE
-def delete_chat(chat_id):
-    db = get_db()
-    cur = db.cursor()
-    cur.execute("DELETE FROM messages WHERE chat_id = ?", (chat_id,))
-    cur.execute("DELETE FROM chat_sessions WHERE id = ?", (chat_id,))
-    db.commit()
-    db.close()
+# 앱 실행 시 자동 DB 초기화
+if not os.path.exists(DB_PATH):
+    init_db()

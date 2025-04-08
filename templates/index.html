@@ -3,43 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>뉴스 요약 챗봇</title>
-  <link rel="stylesheet" href="/static/style.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>뉴스레터 챗봇</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 </head>
 <body>
-  <div class="container">
+  <div class="app-wrapper">
+    <!-- 사이드바 -->
     <aside class="sidebar">
-      <h2>대화 기록</h2>
-      <button id="new-chat" class="btn full"><i class="fas fa-plus"></i> 새 대화</button>
-      <button id="toggle-dark" class="btn full"><i class="fas fa-moon"></i> 다크모드</button>
-      <ul id="chat-list"></ul>
+      <h2>대화 목록</h2>
+      <ul id="conversation-list"></ul>
+      <button id="darkmode-toggle">🌙 다크모드</button>
     </aside>
 
-    <main class="main">
-      <div id="chat-box" class="chat-box">
-        <div class="message bot"><div class="bubble">안녕하세요! 챗봇입니다. 무엇을 도와드릴까요?</div></div>
+    <!-- 메인 챗봇 UI -->
+    <div class="chat-container">
+      <div class="chat-header">
+        <h1></h1>
+        <button id="reset-btn" title="대화 초기화">
+          <i class="fas fa-sync-alt"></i>
+        </button>
       </div>
 
-      <div class="input-area">
-        <input type="text" id="user-input" placeholder="메시지 입력..." autocomplete="off"/>
-        <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+      <div class="chat-messages" id="chat-messages">
+        <div class="message bot-message">
+          <div class="message-content">
+            안녕하세요! 챗봇입니다. 어떤 정보가 필요하신가요?
+          </div>
+        </div>
       </div>
-    </main>
-  </div>
 
-  <!-- 삭제 확인 모달 -->
-  <div id="delete-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn">&times;</span>
-      <p id="delete-title">이 대화를 삭제하시겠습니까?</p>
-      <div class="modal-buttons">
-        <button id="cancel-delete" class="btn">취소</button>
-        <button id="confirm-delete" class="btn danger">삭제</button>
+      <div class="chat-input-container">
+        <input type="text" id="user-input" placeholder="메시지 입력..." />
+        <button id="send-btn" title="전송">
+          <i class="fas fa-paper-plane"></i>
+        </button>
       </div>
     </div>
   </div>
 
-  <script src="/static/script.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
