@@ -4,8 +4,13 @@ import datetime
 import json
 
 
+with open("selectors.json", "r", encoding="utf-8") as f:
+    selectors = json.load(f)
+cgv_selectors = selectors["CGV"]
+
+
 kobis_api_key = "662d65ebb4eb2d7503390ff6d39f26fd"
-target_date = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")  # 어제 날짜
+target_date = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
 
 kobis_url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json"
 params = {
@@ -34,16 +39,16 @@ headers = {
 
 req = requests.get(cgv_url, headers=headers)
 soup = BeautifulSoup(req.text, "html.parser")
-movies = soup.select(".sect-movie-chart ol li")
+movies = soup.select(cgv_selectors["movie_list"])
 
 cgv_data = {}
 for movie in movies:
-    title_tag = movie.select_one(".title")
-    ticketing_tag = movie.select_one(".percent")
+    title_tag = movie.select_one(cgv_selectors["title"])
+    ticketing_tag = movie.select_one(cgv_selectors["ticketing"])
 
     if title_tag and ticketing_tag:
         title = title_tag.text.strip()
-        ticketing = ticketing_tag.get_text(strip=True)
+        ticketing = ticketing_tag.text.strip()
         cgv_data[title] = ticketing
 
 
@@ -58,10 +63,11 @@ with open("movies_with_ticketing.json", "w", encoding="utf-8") as f:
     json.dump(movie_list, f, ensure_ascii=False, indent=2)
 
 
-
 for movie in movie_list:
     print(f"{movie['rank']}위 | {movie['title']}")
     print(f"  개봉일    : {movie['open_date']}")
     print(f"  누적관객수: {movie['audience']}")
     print(f"  CGV 예메율 :{movie['ticketing']}")
     print("-" * 40)
+
+
