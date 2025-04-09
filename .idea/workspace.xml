@@ -4,10 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b0ed508f-c55b-4f6e-98f7-c24765a661f9" name="변경" comment="Delete IA file">
-      <change afterPath="$PROJECT_DIR$/Movie/Movie.py" afterDir="false" />
+    <list default="true" id="b0ed508f-c55b-4f6e-98f7-c24765a661f9" name="변경" comment="json 참조">
+      <change afterPath="$PROJECT_DIR$/README/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/db/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/routes/chat_routes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/routes/movie_routes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/routes/product_routes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/routes/stock_routes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/crawler/movie/movie_crawler.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/crawler/news/news_crawler.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/crawler/product/product_crawler.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/intent_classifier.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/responder.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/summarizer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/static/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/config.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/intent_data.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/svm_model.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/tfidf_vectorizer.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements/requirements.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/run/run.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CGV Movie.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Movie/Movie.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Movie/selectors.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/crawler/movie/selectors.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,16 +53,19 @@
     &quot;assignee&quot;: &quot;Si-1-Han&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Si-1-Han/2025ChatBot.git&quot;,
-    &quot;accountId&quot;: &quot;9d504d59-c412-421c-b099-8075dcfb40b2&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Si-1-Han/2025ChatBot.git",
+    "accountId": "0620af64-6449-4649-828c-8bed6a54f171"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
   <component name="ProjectId" id="2uRzjnxgF6l7NuV99OuGAnPVbIE" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -108,7 +133,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1742226312838</updated>
-      <workItem from="1744003330087" duration="5150000" />
+      <workItem from="1744003330087" duration="9598000" />
     </task>
     <task id="LOCAL-00001" summary=".">
       <option name="closed" value="true" />
@@ -126,7 +151,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742951159137</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="json 참조">
+      <option name="closed" value="true" />
+      <created>1744172140337</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1744172140337</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -146,11 +179,12 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="." />
     <MESSAGE value="Delete IA file" />
-    <option name="LAST_COMMIT_MESSAGE" value="Delete IA file" />
+    <MESSAGE value="json 참조" />
+    <option name="LAST_COMMIT_MESSAGE" value="json 참조" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Chatbot$Movie_Chart.coverage" NAME="Movie_Chart 커버리지 결과" MODIFIED="1744171634297" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/Chatbot$Movie.coverage" NAME="Movie 커버리지 결과" MODIFIED="1744171711004" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Movie" />
+    <SUITE FILE_PATH="coverage/Chatbot$Movie.coverage" NAME="Movie 커버리지 결과" MODIFIED="1744171898910" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Movie" />
     <SUITE FILE_PATH="coverage/Chatbot$Stock.coverage" NAME="Stock 커버리지 결과" MODIFIED="1744012119710" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Chatbot$main.coverage" NAME="main 커버리지 결과" MODIFIED="1744003756729" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
