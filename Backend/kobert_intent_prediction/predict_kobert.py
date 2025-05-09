@@ -19,10 +19,14 @@ def predict_intent(text):
     return labels[predicted]
 
 # 테스트 실행
+# 리터럴 형식이 아닌 json 파일로 변경
 if __name__ == "__main__":
     while True:
-        text = input("입력 문장: ")
-        if text.lower() in ["exit", "quit", "종료"]:
+        userText = input("무엇이 궁금하신가요? : ")
+        if userText.lower() in ["exit", "quit", "종료"]:
             break
-        intent = predict_intent(text)
-        print(f"예측된 의도: {intent}")
+        userIntent = predict_intent(userText)
+        print(f"예측된 의도: {userIntent}")
+        
+# userIntent : 의도 변수
+# userText : 입력된 한글 문장을 담는 변수
