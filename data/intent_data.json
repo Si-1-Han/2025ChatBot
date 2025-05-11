@@ -1,0 +1,14 @@
+[
+  {
+    "text": "다음주 날씨",
+    "intent": "news"
+  },
+  {
+    "text": "다음 주 날씨",
+    "intent": "news"
+  },
+  {
+    "text": "눈이 올까",
+    "intent": "weather"
+  }
+]
