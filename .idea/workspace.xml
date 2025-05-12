@@ -5,31 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b0ed508f-c55b-4f6e-98f7-c24765a661f9" name="변경" comment="json 참조">
-      <change afterPath="$PROJECT_DIR$/README/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/db/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routes/chat_routes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routes/movie_routes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routes/product_routes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routes/stock_routes.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/crawler/movie/movie_crawler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/crawler/news/news_crawler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/crawler/product/product_crawler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/intent_classifier.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/responder.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/summarizer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/static/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/templates/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/config.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/intent_data.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model/svm_model.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model/tfidf_vectorizer.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements/requirements.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/run/run.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Chatbot.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Chatbot.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Movie/Movie.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Movie/selectors.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/crawler/movie/selectors.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/intent_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/intent_classifier.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +37,7 @@
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
     "url": "https://github.com/Si-1-Han/2025ChatBot.git",
-    "accountId": "0620af64-6449-4649-828c-8bed6a54f171"
+    "accountId": "c0e011a1-3fe7-444e-87b1-e2a812bafdd8"
   }
 }]]></component>
   <component name="ProjectColorInfo">{
@@ -78,17 +59,19 @@
     "Python.Movie.executor": "Run",
     "Python.Movie_Chart.executor": "Run",
     "Python.Stock.executor": "Run",
+    "Python.intent_classifier.executor": "Run",
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "Crawling",
+    "git-widget-placeholder": "Han에 #2개",
     "last_opened_file_path": "E:/Github Repository/Projects/2025ChatBot",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -120,8 +103,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-PY-243.25659.43" />
-        <option value="bundled-python-sdk-181015f7ab06-4df51de95216-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.25659.43" />
+        <option value="bundled-python-sdk-4f4e415b4190-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.26053.29" />
       </set>
     </attachedChunks>
   </component>
