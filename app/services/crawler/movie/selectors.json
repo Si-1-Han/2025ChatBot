@@ -1,0 +1,7 @@
+{
+  "CGV": {
+    "movie_list": ".sect-movie-chart ol li",
+    "title": ".title",
+    "ticketing": ".percent"
+  }
+}
