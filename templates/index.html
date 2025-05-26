@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat Bot</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-center" onclick="location.reload()" style="cursor:pointer;">Chat Bot</div>
+  </header>
+
+  <div class="main">
+    <aside class="sidebar">
+      <button class="new-chat-button" onclick="newChat()">+ 새 대화</button>
+      <div id="chat-list" class="chat-list"></div>
+    </aside>
+
+    <div class="chat-area">
+      <div id="chat-box" class="chat-box">
+        <p class="placeholder-text">무엇이든 물어보세요.</p>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chat-input" class="chat-input" placeholder="메시지를 입력하세요..." />
+        <button class="send-button" onclick="sendMessage()">전송</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="delete-modal" class="modal hidden">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">×</span>
+      <h3>채팅을 삭제하시겠습니까?</h3>
+      <p id="delete-message">이 대화가 삭제됩니다.</p>
+      <div class="modal-actions">
+        <button onclick="closeModal()">취소</button>
+        <button class="danger" onclick="confirmDelete()">삭제</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
