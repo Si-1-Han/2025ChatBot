@@ -2,11 +2,12 @@
 
 {
   "exit_keywords": ["exit", "quit", "esc", "종료"],
-  "model_path": "../../model/kobert_intent_model",
-  "label_path": "../../model/label_encoder.pkl",
-  "save_path": "../../data/intent_data.json",
+  "model_path": "model/kobert_intent_model",
+  "label_path": "model/label_encoder.pkl",
+  "save_path": "data/intent_data.json",
   "tokenizer_name": "monologg/kobert",
 
+  "front_config_path": "data/config",
 
    "kobis": {
     "api_key": "662d65ebb4eb2d7503390ff6d39f26fd",

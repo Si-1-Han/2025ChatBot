@@ -11,7 +11,7 @@ def normalize_title(title):
     """한글/영문/숫자만 남기고 소문자로 정규화"""
     return re.sub(r"[^가-힣a-zA-Z0-9]", "", title).lower()
 
-def get_movie_chart_with_ticketing():
+def get_movie_chart():
     # 1. KOBIS 박스오피스 데이터 가져오기
     kobis_api_key = "662d65ebb4eb2d7503390ff6d39f26fd"
     target_date = (datetime.datetime.today() - datetime.timedelta(days=1)).strftime("%Y%m%d")
@@ -78,7 +78,7 @@ def get_movie_chart_with_ticketing():
 
 # 4. 직접 실행 시 출력
 if __name__ == "__main__":
-    movies = get_movie_chart_with_ticketing()
+    movies = get_movie_chart()
     if not movies:
         print("⚠️ 가져온 영화 데이터가 없습니다.")
     else:
