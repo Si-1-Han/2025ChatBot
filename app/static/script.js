@@ -95,11 +95,13 @@ const chatMessages = document.getElementById('chat-messages');
 const userInput = document.getElementById('user-input');
 
 async function loadConfig() {
-    const res = await fetch('/config');
+    const res = await fetch('/api/config');  // ✔ 경로 수정
     const data = await res.json();
-    API_URL = data.API_URL;
+    API_URL = data.API_URL;                 // 예: http://127.0.0.1:5000/api
     document.documentElement.style.setProperty('--theme-color', data.THEME_COLOR);
 }
+
+
 
 async function sendMessage() {
     const message = userInput.value.trim();
@@ -109,39 +111,48 @@ async function sendMessage() {
 
     const typing = addTypingIndicator();
 
-    const response = await fetch(`${API_URL}/chat`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, user_id: userId })
-    });
-    const data = await response.json();
+    try {
+             const response = await fetch(`${API_URL}/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, user_id: userId })
+      });
+      const data = await response.json();
+      chatMessages.removeChild(typing);
+      let botMessage = '';
+      if (data.status === 'success') {
+          // 1) summary(요약) 부분
+          botMessage += `📌 <strong>요약</strong>:<br>${data.summary}<br><br>`;
+          // 2) news의 경우, 실제 뉴스 목록은 data.raw.results 안에 들어 있습니다
+          if (data.raw && Array.isArray(data.raw.results) && data.raw.results.length > 0) {
+              botMessage += `<strong>📰 관련 뉴스:</strong><ul>`;
+              data.raw.results.forEach(item => {
+                  botMessage += `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`;
+              });
+              botMessage += `</ul>`;
+          }
+      } else {
+          // 실패 또는 다른 status일 때 message 필드 그대로 출력
+          botMessage = data.message;
+      }
 
-    chatMessages.removeChild(typing);
+        addMessageToUI('bot', botMessage);
 
-    let botMessage = '';
-    if (data.status === 'success') {
-        botMessage += `📌 <strong>요약</strong>:<br>${data.summary}<br><br>`;
-        if (data.results.length > 0) {
-            botMessage += `<strong>📰 관련 뉴스:</strong><ul>`;
-            data.results.forEach(item => {
-                botMessage += `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`;
-            });
-            botMessage += `</ul>`;
-        }
-    } else {
-        botMessage = data.message;
+        const all = Array.from(chatMessages.querySelectorAll('.message')).map(div => ({
+            type: div.classList.contains('user-message') ? 'user' : 'bot',
+            text: div.innerHTML
+        }));
+
+        const title = message.slice(0, 10) + (message.length > 10 ? '...' : '');
+        saveConversation(title, all);
+
+    } catch (err) {
+        chatMessages.removeChild(typing);
+        addMessageToUI('bot', '❗ 서버 응답 오류가 발생했습니다.');
+        console.error('Chat Error:', err);
     }
-
-    addMessageToUI('bot', botMessage);
-
-    const all = Array.from(chatMessages.querySelectorAll('.message')).map(div => ({
-        type: div.classList.contains('user-message') ? 'user' : 'bot',
-        text: div.innerHTML
-    }));
-
-    const title = message.slice(0, 10) + (message.length > 10 ? '...' : '');
-    saveConversation(title, all);
 }
+
 
 function addMessageToUI(type, content) {
     const div = document.createElement('div');

@@ -167,6 +167,7 @@ body {
   color: #333;
   border-radius: 20px;
   border-bottom-left-radius: 5px;
+  white-space: pre-wrap;
 }
 
 /* 메시지 말풍선 */
