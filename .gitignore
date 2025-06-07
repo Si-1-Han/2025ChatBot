@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+
+# Jupyter Notebook
+.ipynb_checkponts/
+
+# Environments
+.env
+.venv/
+env/
+venv/
+
+# VSCode & IntelliJ IDEA
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs & debug
+*.log
+
+# Data & checkpoints
+*.csv
+*.json
+*.tsv
+*.db
+*.sqlite3
+
+# Model artifacts
+*.pt
+*.pth
+*.bin
+*.ckpt
+checkpoints/
+kobert_intent_model/
+runs/
+model_output/
+
+# HuggingFace transformers cache
+~/.cache/
+~/.huggingface/
+
+# DVC files (if not used)
+*.dvc
+
+# Git local config
+.gitconfig

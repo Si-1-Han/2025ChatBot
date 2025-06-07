@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b0ed508f-c55b-4f6e-98f7-c24765a661f9" name="변경" comment="json 참조">
-      <change afterPath="$PROJECT_DIR$/app/services/crawler/news/news_crawler.py" afterDir="false" />
+    <list default="true" id="b0ed508f-c55b-4f6e-98f7-c24765a661f9" name="변경" comment="- 크롤링 코드 연결&#10;- 데이터 함수화&#10;- 웹페이지 에러 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/crawler/movie/movie_crawler.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/crawler/movie/movie_crawler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/crawler/news/chat_engine.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/script.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/crawler/product/product_crawler.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/crawler/product/product_crawler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/crawler/stock/stock_crawler.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/crawler/stock/stock_crawler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/config.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -182,7 +180,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744172140337</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="- 크롤링 코드 연결&#10;- 데이터 함수화&#10;- 웹페이지 에러 수정">
+      <option name="closed" value="true" />
+      <created>1749146624512</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1749146624512</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -203,7 +209,8 @@
     <MESSAGE value="." />
     <MESSAGE value="Delete IA file" />
     <MESSAGE value="json 참조" />
-    <option name="LAST_COMMIT_MESSAGE" value="json 참조" />
+    <MESSAGE value="- 크롤링 코드 연결&#10;- 데이터 함수화&#10;- 웹페이지 에러 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="- 크롤링 코드 연결&#10;- 데이터 함수화&#10;- 웹페이지 에러 수정" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
