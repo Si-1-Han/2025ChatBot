@@ -95,9 +95,9 @@ const chatMessages = document.getElementById('chat-messages');
 const userInput = document.getElementById('user-input');
 
 async function loadConfig() {
-    const res = await fetch('/api/config');  // ✔ 경로 수정
+    const res = await fetch('/api/config');
     const data = await res.json();
-    API_URL = data.API_URL;                 // 예: http://127.0.0.1:5000/api
+    API_URL = data.API_URL;                 // http://127.0.0.1:5000/api
     document.documentElement.style.setProperty('--theme-color', data.THEME_COLOR);
 }
 
@@ -118,25 +118,40 @@ async function sendMessage() {
           body: JSON.stringify({ message, user_id: userId })
       });
       const data = await response.json();
-      chatMessages.removeChild(typing);
-      let botMessage = '';
-      if (data.status === 'success') {
-          // 1) summary(요약) 부분
-          botMessage += `📌 <strong>요약</strong>:<br>${data.summary}<br><br>`;
-          // 2) news의 경우, 실제 뉴스 목록은 data.raw.results 안에 들어 있습니다
-          if (data.raw && Array.isArray(data.raw.results) && data.raw.results.length > 0) {
-              botMessage += `<strong>📰 관련 뉴스:</strong><ul>`;
-              data.raw.results.forEach(item => {
-                  botMessage += `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`;
-              });
-              botMessage += `</ul>`;
-          }
-      } else {
-          // 실패 또는 다른 status일 때 message 필드 그대로 출력
-          botMessage = data.message;
-      }
+chatMessages.removeChild(typing);
+let botMessage = '';
 
-        addMessageToUI('bot', botMessage);
+if (data.status === 'success') {
+    if (data.intent === 'stock') {
+        botMessage += `<strong> 주식 정보 (상위 5개)</strong>:<br><ul>`;
+        data.message.forEach(stock => {
+            botMessage += `
+                <li>
+                  <strong>${stock.name}</strong><br>
+                  현재가: ${stock.current_price}<br>
+                  전일비: ${stock.price_change}<br>
+                  등락률: ${stock.rate_change}<br>
+                  거래량: ${stock.volume}<br>
+                  거래대금: ${stock.trade_amount}<br>
+                </li><br>
+            `;
+        });
+        botMessage += '</ul>';
+    } else {
+        botMessage += `📌 <strong>요약</strong>:<br>${data.summary}<br><br>`;
+        if (data.raw && Array.isArray(data.raw.results) && data.raw.results.length > 0) {
+            botMessage += `<strong>📰 관련 뉴스:</strong><ul>`;
+            data.raw.results.forEach(item => {
+                botMessage += `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`;
+            });
+            botMessage += `</ul>`;
+        }
+    }
+} else {
+    botMessage = data.message;
+}
+
+addMessageToUI('bot', botMessage);
 
         const all = Array.from(chatMessages.querySelectorAll('.message')).map(div => ({
             type: div.classList.contains('user-message') ? 'user' : 'bot',

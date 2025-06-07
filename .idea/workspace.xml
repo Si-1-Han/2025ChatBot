@@ -5,11 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b0ed508f-c55b-4f6e-98f7-c24765a661f9" name="변경" comment="- 크롤링 코드 연결&#10;- 데이터 함수화&#10;- 웹페이지 에러 수정">
+      <change afterPath="$PROJECT_DIR$/app/services/crawler/goods/goods_crawler.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/label_encoder.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/results/checkpoint-96/model.safetensors" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/train_kobert.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/crawler/product/product_crawler.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/crawler/product/product_crawler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/crawler/product/product_crawler.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/crawler/stock/stock_crawler.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/crawler/stock/stock_crawler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/script.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/static/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +69,7 @@
     "Python.Movie_Chart.executor": "Run",
     "Python.Stock.executor": "Run",
     "Python.app.executor": "Run",
+    "Python.goods_crawler.executor": "Run",
     "Python.intent_classifier.executor": "Run",
     "Python.main.executor": "Run",
     "Python.movie_crawler.executor": "Run",
@@ -87,7 +93,7 @@
       <recent name="$PROJECT_DIR$/.." />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.goods_crawler">
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Chatbot" />
       <option name="ENV_FILES" value="" />
@@ -102,6 +108,28 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/app.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="goods_crawler" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Chatbot" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app/services/crawler/goods" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/services/crawler/goods/goods_crawler.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -135,6 +163,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.goods_crawler" />
         <item itemvalue="Python.app" />
       </list>
     </recent_temporary>

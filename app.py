@@ -4,7 +4,7 @@ import os
 import sys
 
 from app.services.crawler.news.news_crawler import get_news_response
-from app.services.crawler.product.product_crawler import get_goods
+from app.services.crawler.goods.goods_crawler import get_goods
 from app.services.crawler.stock.stock_crawler import get_stock
 
 # 1) 현재 파일(app.py) 위치 절대경로
@@ -45,12 +45,6 @@ def get_config():
     })
 
 
-
-@app.route("/api/movie", methods=["GET"])
-def movie_api():
-    movie_data = get_movie_chart()
-    return jsonify(movie_data)
-
 @app.route("/api/intent", methods=["POST"])
 def intent_api():
     data = request.get_json()
@@ -88,7 +82,7 @@ def chat():
                 "message": movie_data,
                 "summary": movie_data
             }
-        if user_intent == "news":
+        elif user_intent == "news":
             news_result = get_news_response(user_message, history)
             summary = news_result.get("summary", "")
             response_data = {
@@ -99,11 +93,11 @@ def chat():
                 "message": summary
             }
 
-        if user_intent == "goods":
+        elif user_intent == "goods":
             goods_data = get_goods(user_message)
             response_data = {
                 "status": "success",
-                "intent": "product",
+                "intent": "goods",
                 "data": goods_data,
                 "message": goods_data
             }
@@ -128,7 +122,7 @@ def chat():
                 db.save_conversation(user_id, title, "", "")
             else:
                 title = user_message[:10] + ("..." if len(user_message) > 10 else "")
-                summary_text = response_data.get("message", "")
+                summary_text = json.dumps(response_data.get("message", ""), ensure_ascii=False)
                 db.save_conversation(user_id, title, user_message, summary_text)
 
         return jsonify(response_data)
