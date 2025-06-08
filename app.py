@@ -2,6 +2,8 @@
 
 import os
 import sys
+import threading
+import webbrowser
 
 from app.services.crawler.news.news_crawler import get_news_response
 from app.services.crawler.goods.goods_crawler import get_goods
@@ -139,6 +141,10 @@ def reset_conversation():
     db.clear_conversation_history(user_id)
     return jsonify({"status": "success", "message": "대화가 초기화되었습니다."})
 
+def open_browser():
+    webbrowser.open_new("http://127.0.0.1:5000")
 
 if __name__ == "__main__":
-    app.run(debug=config.DEBUG, host=config.HOST, port=config.PORT)
+    # 서버 실행 전에 브라우저 자동 오픈 (별도 스레드)
+    threading.Timer(1.0, open_browser).start()
+    app.run(debug=False, host=config.HOST, port=config.PORT)

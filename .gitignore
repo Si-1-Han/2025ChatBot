@@ -2,51 +2,37 @@
 __pycache__/
 *.py[cod]
 *.so
-*.pyd
 
-# Jupyter Notebook
-.ipynb_checkponts/
+# VSCode & macOS, Windows
+.vscode/
+.DS_Store
+Thumbs.db
 
-# Environments
-.env
+# 가상환경
 .venv/
 env/
 venv/
 
-# VSCode & IntelliJ IDEA
-.vscode/
-.idea/
+# 빌드 및 실행파일
+build/
+dist/
+*.spec
 
-# OS generated files
-.DS_Store
-Thumbs.db
+# 파이썬 테스트/커버리지
+.coverage
+htmlcov/
 
-# Logs & debug
+# Flask/SQLite Local DB
+*.db
+
+# 모델 (대용량 모델 및 체크포인트 무시)
+model/
+
+# 캐시/로그
 *.log
 
-# Data & checkpoints
-*.csv
-*.json
-*.tsv
-*.db
-*.sqlite3
+# 프로젝트 데이터 중 대용량 혹은 자동 생성 파일
+data/intent_data.json
 
-# Model artifacts
-*.pt
-*.pth
-*.bin
-*.ckpt
-checkpoints/
-kobert_intent_model/
-runs/
-model_output/
-
-# HuggingFace transformers cache
-~/.cache/
-~/.huggingface/
-
-# DVC files (if not used)
-*.dvc
-
-# Git local config
-.gitconfig
+# 기타 파생 파일
+*.egg-info/
