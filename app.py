@@ -6,6 +6,7 @@ import sys
 from app.services.crawler.news.news_crawler import get_news_response
 from app.services.crawler.goods.goods_crawler import get_goods
 from app.services.crawler.stock.stock_crawler import get_stock
+from app.services.crawler.weather.weather_crawler import get_weather
 
 # 1) 현재 파일(app.py) 위치 절대경로
 current_file_path = os.path.abspath(__file__)  # .../2025ChatBot/app/app.py
@@ -21,8 +22,6 @@ import json
 
 from app.services.crawler.movie.movie_crawler import get_movie_chart
 from app.services.intent_classifier import predict_intent
-
-# 루트를 sys.path에 추가했으므로 아래 import가 정상 작동함
 
 from app.services.crawler.news import news_crawler as chatbot
 from data import database as db
@@ -63,7 +62,7 @@ def chat():
         user_message = data.get("message", "").strip()
         user_id = data.get("user_id", "anonymous")
 
-        # 1) 입력값 검증
+        # 입력값 검증
         if not user_message:
             return jsonify({"status": "prompt", "message": "검색어를 입력해주세요."}), 400
         if not user_id:
@@ -109,6 +108,15 @@ def chat():
                 "data": stock_data,
                 "message": stock_data
             }
+        elif user_intent == "weather":
+            weather_data = get_weather()  # 반환값: {"today": {...}, "tomorrow": {...}}
+            response_data = {
+                "status": "success",
+                "intent": "weather",
+                "weather": weather_data,
+                "message": weather_data
+            }
+
         else:
             response_data = {
                 "status": "error",
