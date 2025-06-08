@@ -137,6 +137,20 @@ if (data.status === 'success') {
             `;
         });
         botMessage += '</ul>';
+    } else if (data.intent === 'goods') { // <-- 이 부분을 추가
+        botMessage += `<strong>상품 정보 (상위 5개)</strong>:<br><ul>`;
+        data.data.forEach(product => {
+            botMessage += `
+                <li>
+                  <strong><a href="${product.link}" target="_blank">${product.title}</a></strong><br>
+                  가격: ${product.price} 원<br>
+                  평점: ${product.rating} 점<br>
+                </li><br>
+            `;
+        });
+        botMessage += '</ul>';
+
+
     } else {
         botMessage += `📌 <strong>요약</strong>:<br>${data.summary}<br><br>`;
         if (data.raw && Array.isArray(data.raw.results) && data.raw.results.length > 0) {
