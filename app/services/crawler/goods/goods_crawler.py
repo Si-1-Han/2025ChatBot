@@ -1,73 +1,57 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium import webdriver
 
-def get_goods(keyword):
-    options = Options()
-    options.add_argument('--headless=new')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument('window-size=1920,1080')
-    options.add_experimental_option('excludeSwitches', ['enable-automation'])
-    options.add_experimental_option('useAutomationExtension', False)
-
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
-    driver.execute_cdp_cmd(
-        "Page.addScriptToEvaluateOnNewDocument",
-        {
-            "source": """
-                Object.defineProperty(navigator, 'webdriver', {
-                  get: () => undefined
-                })
-            """
-        },
-    )
-
-    query = keyword.replace(" ", "+")
-    url = f"https://www.google.com/search?tbm=shop&q={query}"
-
-    driver.get(url)
-
-    goods = []
+def get_goods(user_message):
+    url = f"https://search.11st.co.kr/pc/total-search?kwd={user_message}"
+    driver = webdriver.Chrome()
     try:
-        # 명시적으로 제품 리스트가 나타날 때까지 기다림 (안정적인 구조 사용)
-        WebDriverWait(driver, 20).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'div.sh-dlr__list-result'))
+        driver.get(url)
+
+        WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "div.c-card-item"))
         )
 
-        items = driver.find_elements(By.CSS_SELECTOR, 'div.sh-dlr__list-result')[:3]
+        products = driver.find_elements(By.CSS_SELECTOR, "div.c-card-item")
 
-        for item in items:
+        result = []
+        for product in products[:5]:
             try:
-                title_elem = item.find_element(By.CSS_SELECTOR, 'h3')
-                price_elem = item.find_element(By.CSS_SELECTOR, 'span.a8Pemb')
-                link_elem = item.find_element(By.CSS_SELECTOR, 'a.shntl')
+                title = product.find_element(By.CSS_SELECTOR, ".c-card-item__name dd").text
+            except NoSuchElementException:
+                title = "상품명 없음"
 
-                title = title_elem.text.strip()
-                price = price_elem.text.strip()
-                link = link_elem.get_attribute('href')
+            try:
+                price = product.find_element(By.CSS_SELECTOR, ".c-card-item__price .value").text
+            except NoSuchElementException:
+                price = "가격 정보 없음"
 
-                goods.append({
-                    'title': title,
-                    'price': price,
-                    'link': link
-                })
+            try:
+                rating = product.find_element(By.CSS_SELECTOR, ".c-starrate__text").text
+            except NoSuchElementException:
+                rating = "평점 정보 없음"
 
-            except Exception as inner_e:
-                print("Inner Exception:", inner_e)
-                continue
+            try:
+                link = product.find_element(By.CSS_SELECTOR, "a.c-card-item__anchor").get_attribute('href')
+            except NoSuchElementException:
+                link = "링크 정보 없음"
 
-    except Exception as e:
-        print("Outer Exception (Wait Error):", e)
+            item = {
+                'title': title,
+                'price': price,
+                'rating': rating,
+                'link': link,
+            }
+            result.append(item)
+
+        return result
+
+    except TimeoutException:
+        print("요청 시간이 초과되었습니다.")
         return []
 
     finally:
         driver.quit()
-
-    return goods

@@ -137,7 +137,56 @@ if (data.status === 'success') {
             `;
         });
         botMessage += '</ul>';
+    } else if (data.intent === 'goods') { // <-- 이 부분을 추가
+        botMessage += `<strong>상품 정보 (상위 5개)</strong>:<br><ul>`;
+        data.data.forEach(product => {
+            botMessage += `
+                <li>
+                  <strong><a href="${product.link}" target="_blank">${product.title}</a></strong><br>
+                  가격: ${product.price} 원<br>
+                  평점: ${product.rating} 점<br>
+                </li><br>
+            `;
+        });
+        botMessage += '</ul>';
+
+    } else if (data.intent === 'weather') {
+    if (data.weather && data.weather.today && data.weather.tomorrow) {
+        function makeWeatherList(summary) {
+            let html = "<ul>";
+            for (const [k, v] of Object.entries(summary)) {
+                // 강수확률
+                if (k.includes("강수확률")) {
+                    html += `<li><span style="color:#339af0;">${k}: ${v}%</span></li>`;
+                }
+                // 최고/최저 기온
+                else if (k.includes("최고기온") || k.includes("최저기온")) {
+                    html += `<li><strong>${k}: ${v}°C</strong></li>`;
+                }
+                // 기온(온도)
+                else if (k.includes("기온")) {
+                    html += `<li>${k}: ${v}°C</li>`;
+                }
+                // 나머지(하늘상태)
+                else {
+                    html += `<li>${k}: ${v}</li>`;
+                }
+            }
+            html += "</ul>";
+            return html;
+        }
+        botMessage += `<strong>🌤️ 오늘 날씨 요약:</strong>`;
+        botMessage += makeWeatherList(data.weather.today);
+        botMessage += `<strong>🌤️ 내일 날씨 요약:</strong>`;
+        botMessage += makeWeatherList(data.weather.tomorrow);
+    } else if (data.message) {
+        botMessage += `❗ ${typeof data.message === 'string' ? data.message : data.message.message}`;
     } else {
+        botMessage += "❗ 날씨 정보를 불러올 수 없습니다.";
+    }
+}
+
+     else {
         botMessage += `📌 <strong>요약</strong>:<br>${data.summary}<br><br>`;
         if (data.raw && Array.isArray(data.raw.results) && data.raw.results.length > 0) {
             botMessage += `<strong>📰 관련 뉴스:</strong><ul>`;
@@ -162,7 +211,9 @@ addMessageToUI('bot', botMessage);
         saveConversation(title, all);
 
     } catch (err) {
-        chatMessages.removeChild(typing);
+        if (typing && typing.parentNode === chatMessages) {
+            chatMessages.removeChild(typing);
+        }
         addMessageToUI('bot', '❗ 서버 응답 오류가 발생했습니다.');
         console.error('Chat Error:', err);
     }
