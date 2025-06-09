@@ -1,0 +1,33 @@
+
+
+{
+  "exit_keywords": ["exit", "quit", "esc", "종료"],
+  "model_path": "model/kobert_intent_model",
+  "label_path": "model/label_encoder.pkl",
+  "save_path": "data/intent_data.json",
+  "tokenizer_name": "monologg/kobert",
+
+  "front_config_path": "data/config",
+
+   "kobis": {
+    "api_key": "662d65ebb4eb2d7503390ff6d39f26fd",
+    "url": "http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json"
+  },
+  "cgv": {
+    "url": "http://www.cgv.co.kr/movies/?lt=1&ft=0"
+  },
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
+  },
+  "selectors": {
+    "CGV": {
+      "movie_list": "div.sect-movie-chart ol li",
+      "title": "strong.title",
+      "ticketing": "strong.percent span"
+    }
+  }
+
+
+
+  }
+
